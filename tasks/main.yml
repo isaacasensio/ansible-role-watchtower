@@ -1,0 +1,60 @@
+---
+- name: Create watchtower user
+  ansible.builtin.user:
+    name: "{{ watchtower_container_user }}"
+    shell: /sbin/nologin
+    create_home: true
+    state: present
+  become: true
+
+- name: Get created user metadata
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ watchtower_container_user }}"
+
+- name: Setting user id and group id facts
+  ansible.builtin.set_fact:
+    created_uid: "{{ ansible_facts.getent_passwd[watchtower_container_user].1 }}"
+    created_gid: "{{ ansible_facts.getent_passwd[watchtower_container_user].2 }}"
+
+- name: Ensure watchtower folders exists
+  become: true
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    owner: "{{ watchtower_container_user }}"
+    group: "{{ watchtower_container_user }}"
+    state: directory
+    mode: 0755
+  loop:
+    - "{{ watchtower_host_config_path }}"
+
+- name: Copy watchtower docker-compose template.
+  ansible.builtin.template:
+    src: templates/docker-compose.yml.j2
+    dest: "{{ watchtower_host_config_path }}/docker-compose.yml"
+    owner: "{{ watchtower_container_user }}"
+    group: "{{ watchtower_container_user }}"
+    mode: 0644
+  become: true
+
+- name: Create systemd watchtower service.
+  ansible.builtin.template:
+    src: templates/watchtower.service.j2
+    dest: "/etc/systemd/system/watchtower.service"
+    mode: 0644
+  become: true
+
+- name: Ensure watchtower.service is started
+  ansible.builtin.systemd:
+    state: started
+    enabled: true
+    name: watchtower
+  become: true
+
+- name: Remove old image versions
+  become: true
+  community.docker.docker_prune:
+    images: true
+    images_filters:
+      dangling: false
+  notify: Restart Docker service

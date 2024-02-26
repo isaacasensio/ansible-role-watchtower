@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+---
+version: '3.4'
+services:
+  watchtower:
+    restart: unless-stopped
+    image: {{ watchtower_image }}
+    container_name: watchtower
+    command: --interval 60
+    environment:
+      WATCHTOWER_MONITOR_ONLY: 'true'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

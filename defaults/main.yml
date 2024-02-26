@@ -1,0 +1,4 @@
+---
+watchtower_image: containrrr/watchtower:latest
+watchtower_host_config_path: /etc/watchtower
+watchtower_container_user: watchtower
