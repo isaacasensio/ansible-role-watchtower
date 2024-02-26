@@ -6,8 +6,7 @@ services:
     restart: unless-stopped
     image: {{ watchtower_image }}
     container_name: watchtower
-    command: --interval 60
     environment:
-      WATCHTOWER_MONITOR_ONLY: 'true'
+      WATCHTOWER_MONITOR_ONLY: 'false'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
