@@ -8,5 +8,11 @@ services:
     container_name: watchtower
     environment:
       WATCHTOWER_MONITOR_ONLY: 'false'
+{% if watchtower_notification_url is defined %}
+      WATCHTOWER_NOTIFICATION_URL: {{ watchtower_notification_url }}
+{% endif %}
+{% if watchtower_notification_template is defined %}
+      WATCHTOWER_NOTIFICATION_TEMPLATE: {{ watchtower_notification_template }}
+{% endif %}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
