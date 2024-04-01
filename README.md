@@ -25,6 +25,10 @@ watchtower_container_user: watchtower
 ```
 user who will run the container
 
+```
+watchtower_notification_url: telegram://TOKEN@telegram?chats=CHAT-ID
+```
+
 Dependencies
 ------------
 
