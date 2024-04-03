@@ -10,8 +10,9 @@ services:
       WATCHTOWER_MONITOR_ONLY: 'false'
 {% if watchtower_notification_url is defined %}
       WATCHTOWER_NOTIFICATION_URL: {{ watchtower_notification_url }}
-      WATCHTOWER_NOTIFICATION_TEMPLATE: >
-      {% raw %}
+      WATCHTOWER_NOTIFICATION_REPORT: "true"
+      WATCHTOWER_NOTIFICATIONS_HOSTNAME: {{ ansible_hostname }}
+      WATCHTOWER_NOTIFICATION_TEMPLATE: >{% raw %}
         {{- if .Report -}} 
           {{- with .Report -}} 
             {{- if ( .Updated ) -}} 
@@ -32,8 +33,6 @@ services:
           {{- end -}} 
         {{- end -}}
       {% endraw %}
-      WATCHTOWER_NOTIFICATION_REPORT: "true"
-      WATCHTOWER_NOTIFICATIONS_HOSTNAME: {{ ansible_hostname }}
 {% endif %}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
