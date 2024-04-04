@@ -6,6 +6,8 @@ services:
     restart: unless-stopped
     image: {{ watchtower_image }}
     container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       WATCHTOWER_MONITOR_ONLY: 'false'
 {% if watchtower_notification_url is defined %}
@@ -34,5 +36,4 @@ services:
         {{- end -}}
       {% endraw %}
 {% endif %}
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+
